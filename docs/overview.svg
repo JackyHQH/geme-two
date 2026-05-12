@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="980" viewBox="0 0 1440 980" role="img" aria-labelledby="title desc">
+  <title id="title">童年小镇合成小游戏总览图</title>
+  <desc id="desc">展示 6x6 棋盘合成玩法、核心系统、Cocos 场景、音效资源和微信小游戏构建流程。</desc>
+  <defs>
+    <style>
+      .bg { fill: #f7f4ea; }
+      .title { font: 700 42px sans-serif; fill: #263238; }
+      .subtitle { font: 400 22px sans-serif; fill: #5b6470; }
+      .section-title { font: 700 24px sans-serif; fill: #263238; }
+      .body { font: 400 18px sans-serif; fill: #34404a; }
+      .small { font: 400 15px sans-serif; fill: #51606b; }
+      .tiny { font: 400 13px sans-serif; fill: #51606b; }
+      .card { fill: #fffdf7; stroke: #d8d0bd; stroke-width: 2; rx: 8; }
+      .card-green { fill: #edf7ee; stroke: #9fca9f; stroke-width: 2; rx: 8; }
+      .card-blue { fill: #edf4fa; stroke: #9abbd3; stroke-width: 2; rx: 8; }
+      .card-gold { fill: #fff4d7; stroke: #d7b95d; stroke-width: 2; rx: 8; }
+      .card-red { fill: #fff0ec; stroke: #d49a89; stroke-width: 2; rx: 8; }
+      .grid-cell { fill: #fbfbf7; stroke: #b8b09f; stroke-width: 1.5; rx: 5; }
+      .piece { font: 700 20px sans-serif; fill: #263238; }
+      .arrow { stroke: #6f7f89; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .thin-arrow { stroke: #9aa5ad; stroke-width: 2; fill: none; marker-end: url(#arrow-small); }
+      .pill { fill: #263238; rx: 16; }
+      .pill-text { font: 700 15px sans-serif; fill: #ffffff; }
+    </style>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 14 7 L 0 14 z" fill="#6f7f89" />
+    </marker>
+    <marker id="arrow-small" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#9aa5ad" />
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1440" height="980" />
+
+  <text x="72" y="78" class="title">童年小镇合成小游戏：当前总览</text>
+  <text x="72" y="116" class="subtitle">Cocos Creator 3.8.8 / 微信小游戏 / 文字占位版先跑通核心玩法</text>
+
+  <rect x="70" y="158" width="380" height="392" class="card-green" />
+  <text x="100" y="202" class="section-title">玩法核心</text>
+  <text x="100" y="236" class="body">固定 6x6 棋盘</text>
+  <text x="100" y="266" class="body">点击空格放置当前物品</text>
+  <text x="100" y="296" class="body">3 个或更多相邻同级物品合成</text>
+  <text x="100" y="326" class="body">合成后继续检测连锁</text>
+  <text x="100" y="356" class="body">棋盘填满则游戏结束</text>
+
+  <g transform="translate(105 382)">
+    <rect width="48" height="48" class="grid-cell" /><text x="24" y="31" text-anchor="middle" class="piece">草</text>
+    <rect x="56" width="48" height="48" class="grid-cell" /><text x="80" y="31" text-anchor="middle" class="piece">草</text>
+    <rect x="112" width="48" height="48" class="grid-cell" /><text x="136" y="31" text-anchor="middle" class="piece">草</text>
+    <rect y="56" width="48" height="48" class="grid-cell" /><text x="24" y="87" text-anchor="middle" class="piece">□</text>
+    <rect x="56" y="56" width="48" height="48" class="grid-cell" /><text x="80" y="87" text-anchor="middle" class="piece">花</text>
+    <rect x="112" y="56" width="48" height="48" class="grid-cell" /><text x="136" y="87" text-anchor="middle" class="piece">□</text>
+    <path d="M 184 52 L 250 52" class="arrow" />
+    <rect x="274" y="28" width="60" height="60" class="grid-cell" /><text x="304" y="65" text-anchor="middle" class="piece">花丛</text>
+  </g>
+
+  <rect x="530" y="158" width="380" height="392" class="card-gold" />
+  <text x="560" y="202" class="section-title">合成路线</text>
+  <g transform="translate(570 238)">
+    <rect width="100" height="46" class="card" /><text x="50" y="30" text-anchor="middle" class="body">草地</text>
+    <path d="M 108 23 L 146 23" class="thin-arrow" />
+    <rect x="156" width="100" height="46" class="card" /><text x="206" y="30" text-anchor="middle" class="body">花丛</text>
+    <path d="M 264 23 L 302 23" class="thin-arrow" />
+    <rect x="312" width="100" height="46" class="card" /><text x="362" y="30" text-anchor="middle" class="body">小树</text>
+
+    <path d="M 362 56 L 362 92" class="thin-arrow" />
+    <rect x="312" y="104" width="100" height="46" class="card" /><text x="362" y="134" text-anchor="middle" class="body">木屋</text>
+    <path d="M 304 127 L 266 127" class="thin-arrow" />
+    <rect x="156" y="104" width="100" height="46" class="card" /><text x="206" y="134" text-anchor="middle" class="body">小院</text>
+    <path d="M 148 127 L 110 127" class="thin-arrow" />
+    <rect y="104" width="100" height="46" class="card" /><text x="50" y="134" text-anchor="middle" class="body">小镇</text>
+
+    <path d="M 50 160 L 50 196" class="thin-arrow" />
+    <rect y="208" width="100" height="46" class="card" /><text x="50" y="238" text-anchor="middle" class="body">城堡</text>
+  </g>
+  <text x="560" y="514" class="small">当前生成池：草地 80% / 花丛 15% / 小树 4% / 木屋 1%</text>
+
+  <rect x="990" y="158" width="380" height="392" class="card-blue" />
+  <text x="1020" y="202" class="section-title">当前工程结构</text>
+  <text x="1020" y="242" class="body">assets/scenes/Game.scene</text>
+  <text x="1048" y="270" class="small">Canvas / Camera / GameRoot</text>
+  <text x="1020" y="312" class="body">assets/scripts/core/TownGame.ts</text>
+  <text x="1048" y="340" class="small">棋盘、随机、放置、合成、连锁、得分</text>
+  <text x="1020" y="382" class="body">assets/scripts/ui/GameController.ts</text>
+  <text x="1048" y="410" class="small">文字格子、点击交互、状态栏</text>
+  <text x="1020" y="452" class="body">tests/town-game.test.mjs</text>
+  <text x="1048" y="480" class="small">核心规则测试</text>
+  <text x="1020" y="522" class="small">验证：npm run test:core</text>
+
+  <rect x="70" y="620" width="380" height="248" class="card" />
+  <text x="100" y="664" class="section-title">音效素材</text>
+  <text x="100" y="704" class="body">源目录：/Users/hongqinghan/sounds</text>
+  <text x="100" y="742" class="small">place.wav：放置</text>
+  <text x="100" y="772" class="small">select.wav：选择/高亮</text>
+  <text x="100" y="802" class="small">click.wav：按钮</text>
+  <text x="100" y="832" class="small">merge.wav：合成</text>
+  <text x="100" y="862" class="small">levelup.wav：连锁/高级升级</text>
+
+  <rect x="530" y="620" width="380" height="248" class="card-red" />
+  <text x="560" y="664" class="section-title">下一步开发</text>
+  <text x="560" y="704" class="body">1. 确认 Game.scene 可预览</text>
+  <text x="560" y="736" class="body">2. 导入音效并接 AudioSource</text>
+  <text x="560" y="768" class="body">3. 加入格子背景和触摸反馈</text>
+  <text x="560" y="800" class="body">4. 增加重新开始 / 撤销 / 暂停</text>
+  <text x="560" y="832" class="body">5. 微信小游戏构建和真机测试</text>
+
+  <rect x="990" y="620" width="380" height="248" class="card" />
+  <text x="1020" y="664" class="section-title">发布链路</text>
+  <g transform="translate(1020 700)">
+    <rect width="120" height="44" class="card-blue" /><text x="60" y="28" text-anchor="middle" class="body">Cocos 预览</text>
+    <path d="M 128 22 L 168 22" class="arrow" />
+    <rect x="180" width="132" height="44" class="card-blue" /><text x="246" y="28" text-anchor="middle" class="body">微信构建</text>
+    <path d="M 246 54 L 246 92" class="arrow" />
+    <rect x="180" y="106" width="132" height="44" class="card-blue" /><text x="246" y="134" text-anchor="middle" class="body">开发者工具</text>
+    <path d="M 172 128 L 132 128" class="arrow" />
+    <rect y="106" width="120" height="44" class="card-blue" /><text x="60" y="134" text-anchor="middle" class="body">真机测试</text>
+  </g>
+
+  <g transform="translate(72 910)">
+    <rect class="pill" width="132" height="32" />
+    <text x="66" y="21" text-anchor="middle" class="pill-text">当前版本</text>
+    <text x="156" y="22" class="small">文字占位 MVP：先验证核心棋盘和合成手感，再逐步补美术、音效和微信能力。</text>
+  </g>
+</svg>

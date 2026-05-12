@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="220" viewBox="0 0 700 220" role="img">
+  <defs>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#7a4a14" flood-opacity="0.24"/>
+    </filter>
+    <linearGradient id="panelGrad" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#fffaf0"/>
+      <stop offset="1" stop-color="#f5dfaa"/>
+    </linearGradient>
+    <linearGradient id="woodGrad" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#c77b31"/>
+      <stop offset="1" stop-color="#8f541f"/>
+    </linearGradient>
+    
+  </defs>
+  <rect x="8" y="8" width="684" height="204" rx="28" fill="#fff8e7" stroke="#d3ad61" stroke-width="6" filter="url(#softShadow)"/><rect x="30" y="30" width="640" height="160" rx="20" fill="none" stroke="#e6c984" stroke-width="3" stroke-dasharray="12 10"/>
+</svg>

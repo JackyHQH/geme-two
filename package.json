@@ -1,0 +1,21 @@
+{
+  "name": "geme-two",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A Cocos Creator WeChat mini game prototype inspired by merge-town board gameplay.",
+  "uuid": "6b04b0c1-7b34-4ff3-91ef-0c3b2b0b9b01",
+  "creator": {
+    "version": "3.8.8"
+  },
+  "scripts": {
+    "typecheck:core": "tsc -p tsconfig.core.json --noEmit",
+    "build:core": "tsc -p tsconfig.core.json",
+    "test:core": "npm run build:core && node tests/town-game.test.mjs"
+  },
+  "devDependencies": {},
+  "creator": {
+    "version": "3.8.8"
+  },
+  "uuid": "2d7c0488-63b4-4037-b615-c7978731ca8e"
+}

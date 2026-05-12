@@ -1,0 +1,10 @@
+library/
+temp/
+local/
+build/
+profiles/
+.creator/
+node_modules/
+dist/
+.DS_Store
+*.log
