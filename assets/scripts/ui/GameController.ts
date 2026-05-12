@@ -267,8 +267,7 @@ export class GameController extends Component {
         const iconNode = this.createNode("Icon", cellNode, 0, 6);
         iconNode.addComponent(UITransform).setContentSize(this.cellSize - 8, this.cellSize - 8);
         const icon = iconNode.addComponent(Graphics);
-        const iconSprite = iconNode.addComponent(Sprite);
-        iconSprite.sizeMode = Sprite.SizeMode.CUSTOM;
+        const iconSprite = this.createSpriteChild(iconNode, this.cellSize - 8, this.cellSize - 8);
 
         const label = this.createLabel("PieceLabel", "", 0, -36, 16, UI.colors.ink, 94, 24, cellNode);
         const button = cellNode.addComponent(Button);
@@ -325,8 +324,7 @@ export class GameController extends Component {
     const iconNode = this.createNode(`${name}Icon`, panel, 0, 12);
     iconNode.addComponent(UITransform).setContentSize(88, 88);
     const icon = iconNode.addComponent(Graphics);
-    const iconSprite = iconNode.addComponent(Sprite);
-    iconSprite.sizeMode = Sprite.SizeMode.CUSTOM;
+    const iconSprite = this.createSpriteChild(iconNode, 88, 88);
     const label = this.createLabel(`${name}Label`, "", 0, -54, 17, UI.colors.ink, 120, 28, panel);
     return { icon, iconSprite, label };
   }
@@ -677,10 +675,16 @@ export class GameController extends Component {
   }
 
   private addSprite(node: Node, assetPath: string, width: number, height: number): Sprite {
-    const sprite = node.getComponent(Sprite) ?? node.addComponent(Sprite);
-    sprite.sizeMode = Sprite.SizeMode.CUSTOM;
-    node.getComponent(UITransform)?.setContentSize(width, height);
+    const sprite = this.createSpriteChild(node, width, height);
     this.setSprite(sprite, assetPath);
+    return sprite;
+  }
+
+  private createSpriteChild(node: Node, width: number, height: number): Sprite {
+    const spriteNode = this.createNode(`${node.name}AssetSprite`, node, 0, 0);
+    spriteNode.addComponent(UITransform).setContentSize(width, height);
+    const sprite = spriteNode.addComponent(Sprite);
+    sprite.sizeMode = Sprite.SizeMode.CUSTOM;
     return sprite;
   }
 
