@@ -25,7 +25,7 @@ export interface MergeEvent {
 
 export interface PlaceResult {
   ok: boolean;
-  reason?: "out-of-bounds" | "occupied" | "game-over";
+  reason?: "out-of-bounds" | "occupied" | "game-over" | "no-empty-cell";
   placed?: Coord;
   merges: MergeEvent[];
   bearMoves: BearMoveEvent[];
@@ -207,6 +207,11 @@ export class TownGame {
   place(row: number, col: number): PlaceResult {
     if (this.ended) {
       return this.failedPlace("game-over");
+    }
+
+    if (this.isBoardFull()) {
+      this.ended = true;
+      return this.failedPlace("no-empty-cell");
     }
 
     if (!this.inBounds(row, col)) {

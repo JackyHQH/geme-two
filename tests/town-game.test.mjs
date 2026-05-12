@@ -140,6 +140,19 @@ function labels(game) {
 }
 
 {
+  const game = new TownGame({ rows: 2, cols: 2, random: new SeededRandom(1) });
+  game.setPiece(0, 0, 1);
+  game.setPiece(0, 1, 2);
+  game.setPiece(1, 0, 3);
+  game.setPiece(1, 1, 4);
+
+  const result = game.place(0, 0);
+  assert.equal(result.ok, false);
+  assert.equal(result.reason, "game-over");
+  assert.equal(result.gameOver, true);
+}
+
+{
   const game = new TownGame({ rows: 3, cols: 3, random: new SeededRandom(1) });
   assert.equal(game.canUndo(), false);
   game.forceCurrentPiece(1);

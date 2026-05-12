@@ -1,4 +1,4 @@
-import { _decorator, AudioClip, AudioSource, Button, Color, Component, EventMouse, EventTouch, Graphics, Label, Node, resources, Sprite, SpriteFrame, sys, tween, UITransform, Vec3 } from "cc";
+import { _decorator, AudioClip, AudioSource, Button, Color, Component, EventMouse, EventTouch, Graphics, Label, Node, resources, Sprite, SpriteFrame, sys, Texture2D, tween, UITransform, Vec3 } from "cc";
 import { SeededRandom, TownGame } from "../core/TownGame";
 import type { BearMoveEvent, Cell } from "../core/TownGame";
 import { drawBoardFrame, drawInsetPanel, drawPieceIcon, drawRibbon, drawRoundedBox, drawWoodSign, pieceVisual, UI } from "./theme/UiTheme";
@@ -50,6 +50,9 @@ export class GameController extends Component {
   private audioSource: AudioSource | null = null;
   private audioClips = new Map<string, AudioClip>();
   private spriteFrames = new Map<string, SpriteFrame>();
+  private debugLabel: Label | null = null;
+  private spriteLoadSuccess = 0;
+  private spriteLoadFail = 0;
   private bestScore = 0;
   private coins = 2456;
   private soundEnabled = true;
@@ -73,6 +76,7 @@ export class GameController extends Component {
     this.cells = [];
     this.clearUiRefs();
     this.createStartMenuBackground();
+    this.createDebugLabel(this.node, 238, 624);
     this.createStartMenuLabels();
   }
 
@@ -93,10 +97,14 @@ export class GameController extends Component {
     });
 
     this.createBackground();
+    this.createDebugLabel(this.node, 238, 624);
     this.createTopHud();
     this.createBoard();
     this.createBottomTray();
     this.refresh();
+    if (this.bearModeEnabled) {
+      this.setStatus("小熊模式已开启：每20回合会出现一只小熊");
+    }
   }
 
   restart(): void {
@@ -125,6 +133,7 @@ export class GameController extends Component {
     this.nextIconSprite = null;
     this.soundIconLabel = null;
     this.internalStatusLabel = null;
+    this.debugLabel = null;
   }
 
   private createStartMenuBackground(): void {
@@ -132,14 +141,7 @@ export class GameController extends Component {
     background.addComponent(UITransform).setContentSize(UI.screen.width, UI.screen.height);
     const sprite = background.addComponent(Sprite);
     sprite.sizeMode = Sprite.SizeMode.CUSTOM;
-    resources.load("ui/menu/start-menu-v1/spriteFrame", SpriteFrame, (error, frame) => {
-      if (error || !frame) {
-        console.warn("Failed to load start menu image", error);
-        drawRoundedBox(background.addComponent(Graphics), UI.screen.width, UI.screen.height, UI.colors.parchment, UI.colors.parchment, 0, 0);
-        return;
-      }
-      sprite.spriteFrame = frame;
-    });
+    this.setSprite(sprite, "ui/menu/start-menu-v1");
   }
 
   private createStartMenuLabels(): void {
@@ -148,43 +150,47 @@ export class GameController extends Component {
     title.outlineColor = UI.colors.ink;
     title.outlineWidth = 5;
 
-    this.createModeOption(6, 0, 126);
-    this.createModeOption(7, 0, -28);
-    this.createModeOption(8, 0, -182);
-    this.createBearModeOption(0, -338);
-    this.createStartButton(0, -506);
+    this.createModeOption(6, 34, 220);
+    this.createModeOption(7, 34, 68);
+    this.createModeOption(8, 34, -84);
+    this.createBearModeOption(0, -236);
+    this.createStartButton(0, -358);
   }
 
   private createModeOption(size: number, x: number, y: number): void {
     const selected = this.selectedBoardSize === size;
-    this.createMenuHitZone(`Mode${size}`, x, y, 520, 104, () => {
+    this.createMenuHitZone(`Mode${size}`, x, y, 560, 112, () => {
       this.selectedBoardSize = size;
       sys.localStorage.setItem("childhood-town-board-size", String(size));
       this.playSound("select");
       this.showStartMenu();
     });
-    const label = this.createLabel(`Mode${size}Label`, `${size} x ${size} 棋盘`, x + 54, y + 7, 34, selected ? UI.colors.buttonGold : UI.colors.ink, 360, 48, this.node);
+    const label = this.createLabel(`Mode${size}Label`, `${size} x ${size} 棋盘`, x + 58, y + 6, 32, selected ? UI.colors.buttonGold : UI.colors.ink, 360, 48, this.node);
     label.enableOutline = selected;
     label.outlineColor = UI.colors.ink;
     label.outlineWidth = selected ? 2 : 0;
   }
 
   private createBearModeOption(x: number, y: number): void {
-    this.createMenuHitZone("BearModeToggle", x, y, 430, 86, () => {
+    this.createMenuHitZone("BearModeToggle", x, y, 470, 96, () => {
       this.bearModeEnabled = !this.bearModeEnabled;
       sys.localStorage.setItem("childhood-town-bear-mode", this.bearModeEnabled ? "on" : "off");
       this.playSound("select");
       this.showStartMenu();
     });
-    this.createLabel("BearModeLabel", `小熊模式：${this.bearModeEnabled ? "开" : "关"}`, x - 4, y + 6, 30, UI.colors.ink, 330, 46, this.node);
+    this.createLabel("BearModeLabel", `小熊模式：${this.bearModeEnabled ? "开" : "关"}`, x - 70, y + 6, 28, UI.colors.ink, 260, 46, this.node);
+    const state = this.createLabel("BearModeState", this.bearModeEnabled ? "已开启" : "已关闭", x + 132, y + 6, 24, this.bearModeEnabled ? UI.colors.buttonGold : UI.colors.mutedInk, 110, 40, this.node);
+    state.enableOutline = this.bearModeEnabled;
+    state.outlineColor = UI.colors.ink;
+    state.outlineWidth = this.bearModeEnabled ? 2 : 0;
   }
 
   private createStartButton(x: number, y: number): void {
-    this.createMenuHitZone("StartButton", x, y, 500, 100, () => {
+    this.createMenuHitZone("StartButton", x, y, 520, 108, () => {
       this.playSound("click");
       this.beginGame();
     });
-    const label = this.createLabel("StartButtonLabel", "开始游戏", x, y + 12, 44, UI.colors.white, 360, 58, this.node);
+    const label = this.createLabel("StartButtonLabel", "开始游戏", x, y + 10, 44, UI.colors.white, 360, 58, this.node);
     label.enableOutline = true;
     label.outlineColor = UI.colors.ink;
     label.outlineWidth = 4;
@@ -359,6 +365,10 @@ export class GameController extends Component {
 
     const statusPanel = this.createPanel("StatusPanel", 0, -648, 600, 36, UI.colors.panel, UI.colors.panelStroke);
     this.internalStatusLabel = this.createLabel("StatusLabel", "", 0, 0, 19, UI.colors.ink, 560, 30, statusPanel);
+  }
+
+  private createDebugLabel(parent: Node, x: number, y: number): void {
+    this.debugLabel = this.createLabel("SpriteDebugLabel", "UI图: 等待加载", x, y, 16, UI.colors.ink, 250, 26, parent);
   }
 
   private onCellNodeTap(row: number, col: number, event: EventTouch | EventMouse): void {
@@ -689,21 +699,58 @@ export class GameController extends Component {
   }
 
   private setSprite(sprite: Sprite, assetPath: string): void {
+    console.log(`[UI Sprite] request ${assetPath}`);
     const cached = this.spriteFrames.get(assetPath);
     if (cached) {
+      console.log(`[UI Sprite] cached ${assetPath}`);
       sprite.spriteFrame = cached;
+      this.updateSpriteDebugLabel();
       return;
     }
 
-    resources.load(`${assetPath}/spriteFrame`, SpriteFrame, (error, frame) => {
-      if (error || !frame) {
-        console.warn(`Failed to load ${assetPath}`, error);
+    resources.load(`${assetPath}/spriteFrame`, SpriteFrame, (frameError, frame) => {
+      if (frame && !frameError) {
+        this.spriteFrames.set(assetPath, frame);
+        sprite.spriteFrame = frame;
+        this.spriteLoadSuccess += 1;
+        console.log(`[UI Sprite] loaded spriteFrame ${assetPath}/spriteFrame`);
+        this.updateSpriteDebugLabel();
         return;
       }
 
-      this.spriteFrames.set(assetPath, frame);
-      sprite.spriteFrame = frame;
+      console.warn(`[UI Sprite] spriteFrame miss ${assetPath}/spriteFrame`, frameError);
+      this.loadSpriteTexture(sprite, assetPath, `${assetPath}/texture`, () => {
+        this.loadSpriteTexture(sprite, assetPath, assetPath, () => {
+          this.spriteLoadFail += 1;
+          console.warn(`[UI Sprite] all load attempts failed ${assetPath}`);
+          this.updateSpriteDebugLabel();
+        });
+      });
     });
+  }
+
+  private loadSpriteTexture(sprite: Sprite, cacheKey: string, texturePath: string, onFail: () => void): void {
+    resources.load(texturePath, Texture2D, (error, texture) => {
+      if (error || !texture) {
+        console.warn(`[UI Sprite] texture miss ${texturePath}`, error);
+        onFail();
+        return;
+      }
+
+      const frame = new SpriteFrame();
+      frame.texture = texture;
+      this.spriteFrames.set(cacheKey, frame);
+      sprite.spriteFrame = frame;
+      this.spriteLoadSuccess += 1;
+      console.log(`[UI Sprite] loaded texture ${texturePath}`, texture.width, texture.height);
+      this.updateSpriteDebugLabel();
+    });
+  }
+
+  private updateSpriteDebugLabel(): void {
+    if (this.debugLabel) {
+      this.debugLabel.string = `UI图 OK:${this.spriteLoadSuccess} FAIL:${this.spriteLoadFail}`;
+    }
   }
 
   private createGrassTrim(parent: Node, x: number, y: number, width: number, height: number): void {
@@ -803,7 +850,8 @@ export class GameController extends Component {
     const map: Record<string, string> = {
       occupied: "格子已经有东西",
       "out-of-bounds": "超出棋盘",
-      "game-over": "游戏已结束"
+      "game-over": "没有空地了，游戏已结束",
+      "no-empty-cell": "没有空地了"
     };
 
     return reason ? map[reason] ?? reason : "未知原因";
